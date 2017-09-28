@@ -11,7 +11,7 @@ using namespace std;
 
 static mutex talking_stick;
 static const int num_threads = 10;
-static const array<string, 5> test_string = {"test", "this", "string", "array", "please"}; 
+static const array<string, 5> test_string = {"Test", "this", "array", "of", "strings"}; 
 
 void test_print(bool use_mut, int thread_id) {
 	if (use_mut) {
