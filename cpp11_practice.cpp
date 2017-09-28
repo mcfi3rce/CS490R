@@ -1,31 +1,56 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <array>
+#include <vector>
 #include <string>
+#include <chrono>
+#include <cxxopts.hpp>
 
 using namespace std;
 
+static mutex talking_stick;
 static const int num_threads = 10;
-static const array <string, 5> test_string = {"test", "this", "string", "array", "please"}; 
-void test_print() {
+static const array<string, 5> test_string = {"test", "this", "string", "array", "please"}; 
+
+void test_print(bool use_mut, int thread_id) {
+	if (use_mut) {
+		talking_stick.lock();
+	}
 	for (int i = 0; i < test_string.size(); ++i) {
-		cout << test_string[i] << endl;
+		cout << test_string[i] << " ";
+		this_thread::sleep_for(chrono::milliseconds(10));
 	}
 	cout << endl;
+	if (use_mut) {
+		talking_stick.unlock();
+	}
 }
 
-int main() {
-	thread t[num_threads];
+int main(int argc, char* argv[]) {
+	cxxopts::Options options("Talking Stick", "To demonstrate a trivial issue with threading");
+
+	options.add_options()
+		("m,mutex", "Use mutex");
+
+	options.parse(argc, argv);
+
+	bool use_talking_stick = false;
+
+	if (options.count("m")) {
+		use_talking_stick = true;
+	}
+
+	vector<thread> threads;
 
 	for (int i = 0; i < num_threads; ++i) {
-		t[i] = thread(test_print);
+		threads.push_back(thread(test_print, use_talking_stick, i));
+	}
+
+	for (auto &t : threads) {
+		t.join();
 	}
 
 	cout << "Main thread exiting" << endl;
-
-	for (int i = 0; i < num_threads; ++i) {
-		t[i].join();
-	}
-
 	return 0;
 }
