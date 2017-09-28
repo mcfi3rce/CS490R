@@ -37,8 +37,9 @@ int main(int argc, char* argv[]) {
 
 	bool use_talking_stick = false;
 
-	if (options.count("m")) {
+	if (options.count("m") && options["mutex"].as<bool>()) {
 		use_talking_stick = true;
+		cout << "Using mutex" << endl;
 	}
 
 	vector<thread> threads;
