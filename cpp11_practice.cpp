@@ -11,9 +11,9 @@ using namespace std;
 
 static mutex talking_stick;
 static const int num_threads = 10;
-static const array<string, 5> test_string = {"Test", "this", "array", "of", "strings"}; 
+static const array<string, 5> test_string = {"Test", "this", "array", "of", "strings"};
 
-void test_print(bool use_mut, int thread_id) {
+void test_print(bool use_mut, string test) {
 	if (use_mut) {
 		talking_stick.lock();
 	}
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 	vector<thread> threads;
 
 	for (int i = 0; i < num_threads; ++i) {
-		threads.push_back(thread(test_print, use_talking_stick, i));
+		threads.push_back(thread(test_print, use_talking_stick, "Test"));
 	}
 
 	for (auto &t : threads) {
