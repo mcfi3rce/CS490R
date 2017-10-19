@@ -2,3 +2,6 @@
 	path = cxxopts
 	url = https://github.com/jarro2783/cxxopts.git
 	branch = master
+[submodule "openmp/PicoSHA2"]
+	path = openmp/PicoSHA2
+	url = https://github.com/okdshin/PicoSHA2.git
