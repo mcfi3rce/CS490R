@@ -21,10 +21,9 @@ int main()
 
 	#pragma omp parallel for
 	for (int i = 0; i < words.size(); ++i) {
-		std::string current_word = words.at(i);
 		std::vector<unsigned char> hash(32);
 
-		picosha2::hash256(current_word, hash);
+		picosha2::hash256(words.at(i), hash);
 		std::string hash_str = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
 	}
 
