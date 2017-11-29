@@ -14,11 +14,10 @@ def recieve(socket, queue):
     split = string.split(buffer)
     for field in split:
         queue.append(field)
-            
 
 while True:
 
-    readable, w, e = select.select([s],[],[],1)
+    readable, w, e = select.select([s],[],[])
     for sock in readable:
         recieve(s, commands)
 
