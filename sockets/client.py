@@ -1,34 +1,39 @@
 import socket
 import thread
 import string
+from collections import deque
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(('localhost', 11000))
 
-buffer = ''
-buffer += s.recv(1)
+commands = deque()
 
-split = string.split(buffer, "\n", 1)[0]
-if len(split) >= 2:
-    buffer = split[1]
+def recieve(socket, queue):
+    buffer = s.recv(2048)
+    split = string.split(buffer)
+    for field in split:
+        queue.append(field)
+            
 
-my_id = int(split[0])
-print("My id is: " + str(my_id))
+recieve(s, commands)
 
-#s.send(str(sum(range(m, m + 10))))
 
 while True:
-    buffer += s.recv(2048)
-    split = string.split(buffer, "\n", 1)[0]
-    if len(split) >= 2:
-        buffer = split[1]
+
+    recieve(s, commands)
+
+    while len(commands) > 0:
+        command = string.split(commands.popleft(), ":")
+        if command[0] == "q":
+            print("Recieved quit")
+            s.close()
+            exit()
+        elif command[0] == "i":
+            my_id = int(command[1])
+            print("My id is: " + str(my_id))
+        else:
+            print(command)
+    #sleep(1)
+s.send("u\n")
 
 
-    if split[0] == "quit":
-        print("Recieved quit")
-        exit()
-    else:
-        print(split[0])
-
-
-s.close()
