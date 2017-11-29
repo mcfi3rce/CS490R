@@ -9,7 +9,7 @@ from collections import deque
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(('localhost', 11000))
 
-commands = deque()
+players = {}
 
 def recieve(socket, queue):
     buffer = socket.recv(2048)
@@ -19,8 +19,9 @@ def recieve(socket, queue):
 
 def draw_menu(stdscr):
     k = 0
-    cursor_x = 0
-    cursor_y = 0
+    #cursor_x = 0
+    #cursor_y = 0
+    last_command = ""
 
     # Clear and refresh the screen for a blank canvas
     stdscr.clear()
@@ -35,6 +36,7 @@ def draw_menu(stdscr):
     # Loop where k is the last character pressed
     while (k != ord('q')):
         move = ""
+        commands = deque()
 
         # Initialization
         stdscr.clear()
@@ -97,7 +99,7 @@ def draw_menu(stdscr):
         #stdscr.addstr(10, 10, player)
         #stdscr.addstr(cursor_y, cursor_x, "O")
 
-        readable, w, e = select.select([s],[],[],0)
+        readable, w, e = select.select([s],[],[],0.01)
         for sock in readable:
             recieve(s, commands)
 
@@ -110,11 +112,17 @@ def draw_menu(stdscr):
             elif command[0] == "i":
                 my_id = int(command[1])
                 # print("My id is: " + str(my_id))
+            elif command[0] == "p":
+                players[command[1]] = [command[2], command[3]]
 
             last_command = str(command)
 
         #create statusbar string
-        statusbarstr = "Press 'q' to exit | STATUS BAR | Command: {} | Output: {}".format(last_command, move)
+        statusbarstr = "Press 'q' to exit | Command: {} | Output: {}".format(last_command, move)
+        #render Players
+        for i, p in players.iteritems():
+            stdscr.addstr(int(p[1]), int(p[0]), "O")
+
 
         # Render status bar
         stdscr.attron(curses.color_pair(3))

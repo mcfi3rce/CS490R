@@ -3,19 +3,20 @@ import thread
 import select
 import time
 import string
-import Queue
 from collections import deque
 
 class Player:
     player_id = -1
 
     # Last movement direction from client: None, Up, Down, Left, Right
-    last_dir = "n"
+    last_dir = ""
     loc_x = 0
     loc_y = 0
 
     def __init__ (self, id):
         self.player_id = id
+
+players = {}
 
 def recieve(socket, queue):
     buffer = socket.recv(2048)
@@ -51,8 +52,25 @@ def client_thread(clientsocket, address, id):
                 #exit()
             elif input[0] == "m":
                 print("Player " + input[1] + " wants to move " + input[2])
+                if input[2] == "u":
+                    player.loc_y = (player.loc_y - 1) % 25
+                elif input[2] == "d":
+                    player.loc_y = (player.loc_y + 1) % 25
+                elif input[2] == "r":
+                    player.loc_x = (player.loc_x + 1) % 80
+                elif input[2] == "l":
+                    player.loc_x = (player.loc_x - 1) % 80
+
+                player.last_dir = input[2]
+                players[player.player_id] = player
             else:
                 print(input)
+
+        for i, p in players.iteritems():
+            clientsocket.send("p:" + str(p.player_id) + ":" + str(p.loc_x) + ":" + str(p.loc_y) + "\n")
+
+        time.sleep(0.1)
+
 
     #for i in range(1, 10):
         #clientsocket.send("p:" + str(i) + "\n")
@@ -69,8 +87,6 @@ s.bind(('', 11000))
 s.listen(5)
 
 next_id = 0
-players = []
-moves = Queue.Queue()
 while True:
    (clientsocket, address) = s.accept()
    thread.start_new_thread(client_thread, (clientsocket, address, next_id))
