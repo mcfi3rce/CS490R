@@ -112,7 +112,7 @@ def draw_menu(stdscr):
             elif command[0] == "i":
                 my_id = int(command[1])
                 # print("My id is: " + str(my_id))
-            elif command[0] == "p":
+            elif command[0] == "p" and len(command) == 4:
                 players[command[1]] = [command[2], command[3]]
 
             last_command = str(command)
@@ -121,7 +121,7 @@ def draw_menu(stdscr):
         statusbarstr = "Press 'q' to exit | Command: {} | Output: {}".format(last_command, move)
         #render Players
         for i, p in players.iteritems():
-            stdscr.addstr(int(p[1]), int(p[0]), "O")
+            stdscr.addstr(int(p[1]), int(p[0]), i)
 
 
         # Render status bar
