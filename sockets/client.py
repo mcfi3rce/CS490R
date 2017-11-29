@@ -1,6 +1,7 @@
 import socket
 import thread
 import string
+import select
 from collections import deque
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,12 +16,11 @@ def recieve(socket, queue):
         queue.append(field)
             
 
-recieve(s, commands)
-
-
 while True:
 
-    recieve(s, commands)
+    readable, w, e = select.select([s],[],[],1)
+    for sock in readable:
+        recieve(s, commands)
 
     while len(commands) > 0:
         command = string.split(commands.popleft(), ":")

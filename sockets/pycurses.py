@@ -22,7 +22,7 @@ def draw_menu(stdscr):
         # Initialization
         stdscr.clear()
         height, width = stdscr.getmaxyx()
-        print "\x1b[8;50;80t"
+        #print "\x1b[8;50;80t"
         if k == curses.KEY_DOWN:
             cursor_y = cursor_y + 1
         elif k == curses.KEY_UP:
@@ -47,14 +47,14 @@ def draw_menu(stdscr):
             keystr = "No key press detected..."[:width-1]
 
         # Centering calculations
-        start_x_title = int((width // 2) - (len(title) // 2) - len(title) % 2)
-        start_x_subtitle = int((width // 2) - (len(subtitle) // 2) - len(subtitle) % 2)
-        start_x_keystr = int((width // 2) - (len(keystr) // 2) - len(keystr) % 2)
-        start_y = int((height // 2) - 2)
+        #start_x_title = int((width // 2) - (len(title) // 2) - len(title) % 2)
+        #start_x_subtitle = int((width // 2) - (len(subtitle) // 2) - len(subtitle) % 2)
+        #start_x_keystr = int((width // 2) - (len(keystr) // 2) - len(keystr) % 2)
+        #start_y = int((height // 2) - 2)
 
         # Rendering some text
-        whstr = "Width: {}, Height: {}".format(width, height)
-        stdscr.addstr(0, 0, whstr, curses.color_pair(1))
+        #whstr = "Width: {}, Height: {}".format(width, height)
+        #stdscr.addstr(0, 0, whstr, curses.color_pair(1))
 
         # Render status bar
         stdscr.attron(curses.color_pair(3))
@@ -67,17 +67,17 @@ def draw_menu(stdscr):
         stdscr.attron(curses.COLOR_MAGENTA)
 
         # Rendering title
-        stdscr.addstr(start_y, start_x_title, title)
+        #stdscr.addstr(start_y, start_x_title, title)
 
         # Turning off attributes for title
         stdscr.attroff(curses.color_pair(2))
         stdscr.attroff(curses.COLOR_MAGENTA)
 
         # Print rest of text
-        stdscr.addstr(start_y + 1, start_x_subtitle, subtitle)
-        stdscr.addstr(start_y + 3, (width // 2) - 2, '-' * 4)
-        stdscr.addstr(start_y + 5, start_x_keystr, keystr)
-        stdscr.move(cursor_y, cursor_x)
+        player = "O"[:width-1]
+        stdscr.addstr(10, 10, player)
+        stdscr.addstr(cursor_y, cursor_x, "O")
+
 
         # Refresh the screen
         stdscr.refresh()
