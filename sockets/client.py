@@ -63,13 +63,13 @@ def game_loop(stdscr):
         # This changes terminal size
         #print "\x1b[8;50;80t"
 
-        if k == curses.KEY_DOWN:
+        if k == curses.KEY_DOWN or k == ord('j'):
             move = "d"
-        elif k == curses.KEY_UP:
+        elif k == curses.KEY_UP or k == ord('k'):
             move = "u"
-        elif k == curses.KEY_RIGHT:
+        elif k == curses.KEY_RIGHT or k == ord('l'):
             move = "r"
-        elif k == curses.KEY_LEFT:
+        elif k == curses.KEY_LEFT or k == ord('h'):
             move = "l"
         elif k == ord('q'):
             s.send("q:" + str(my_id))

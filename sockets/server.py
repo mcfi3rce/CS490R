@@ -75,10 +75,13 @@ def client_thread(clientsocket, address, id):
             if input[0] == "q":
                 print("Player " + input[1] + " quit")
                 try:
-                    s.send("q")
+                    clientsocket.send("q")
                 except socket.error as msg:
                     print("Player " + input[1] + " disconnected")
-                del players[player.player_id]
+                try:
+                    del players[player.player_id]
+                except KeyError as msg:
+                    print("Player already deleted")
                 quit = True
                 try:
                     clientsocket.close()
@@ -103,7 +106,20 @@ def client_thread(clientsocket, address, id):
                 print(input)
 
         for i, p in players.iteritems():
-            clientsocket.send("p:" + str(p.player_id) + ":" + str(p.loc_x) + ":" + str(p.loc_y) + "\n")
+            try:
+                clientsocket.send("p:" + str(p.player_id) + ":" + str(p.loc_x) + ":" + str(p.loc_y) + "\n")
+            except socket.error as msg:
+                print("Player seems to have disconnected, closing socket")
+                try:
+                    del players[player.player_id]
+                except KeyError as msg:
+                    print("Player already deleted")
+                try:
+                    clientsocket.close()
+                except socket.error as msg:
+                    print("Socket already closed")
+                quit = True
+                break
 
         time.sleep(0.1)
 
