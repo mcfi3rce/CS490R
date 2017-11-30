@@ -33,6 +33,8 @@ def draw_menu(stdscr):
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
+    curses.curs_set(0)
+
     # Loop where k is the last character pressed
     while (k != ord('q')):
         move = ""
@@ -112,13 +114,13 @@ def draw_menu(stdscr):
             elif command[0] == "i":
                 my_id = int(command[1])
                 # print("My id is: " + str(my_id))
-            elif command[0] == "p" and len(command) == 4:
+            elif command[0] == "p" and len(command) == 4 and command[3] != "":
                 players[command[1]] = [command[2], command[3]]
 
             last_command = str(command)
 
         #create statusbar string
-        statusbarstr = "Press 'q' to exit | Command: {} | Output: {}".format(last_command, move)
+        statusbarstr = "Press 'q' to exit | Command: {} | Movement: {}".format(last_command, move)
         #render Players
         for i, p in players.iteritems():
             stdscr.addstr(int(p[1]), int(p[0]), i)
@@ -126,8 +128,10 @@ def draw_menu(stdscr):
 
         # Render status bar
         stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(height-1, 0, statusbarstr)
-        stdscr.addstr(height-1, len(statusbarstr), " " * (width - len(statusbarstr) - 1))
+        stdscr.addstr(25, 0, statusbarstr)
+        stdscr.addstr(25, len(statusbarstr), " " * (80 - len(statusbarstr)))
+        for i in range(0, 26):
+            stdscr.addstr(i, 80, " ")
         stdscr.attroff(curses.color_pair(3))
 
         # Refresh the screen
