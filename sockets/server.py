@@ -3,7 +3,22 @@ import thread
 import select
 import time
 import string
+import argparse
 from collections import deque
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-p", "--port", type=int, help="port number to connect to")
+parser.add_argument("-i", "--ip", help="ip address to connect to")
+args = parser.parse_args()
+
+# set up socket parameters
+port = 11000
+ip = ""
+if args.port:
+    port = args.port
+
+if args.ip:
+    ip = args.ip
 
 class Player:
     player_id = -1
@@ -46,9 +61,17 @@ def client_thread(clientsocket, address, id):
             input = string.split(inputs.popleft(), ":")
             if input[0] == "q":
                 print("Player " + input[1] + " quit")
+                try:
+                    s.send("q")
+                except socket.error as msg:
+                    print("Player " + input[1] + " disconnected")
+                del players[player.player_id]
                 quit = True
+                try:
+                    clientsocket.close()
+                except socket.error as msg:
+                    print(msg)
                 break
-                #s.close()
                 #exit()
             elif input[0] == "m":
                 print("Player " + input[1] + " wants to move " + input[2])
@@ -71,18 +94,11 @@ def client_thread(clientsocket, address, id):
 
         time.sleep(0.1)
 
-
-    #for i in range(1, 10):
-        #clientsocket.send("p:" + str(i) + "\n")
-        #time.sleep(1)
-   #m = int(clientsocket.recv(10))
-   #result.r = m
-
-    clientsocket.send("q\n")
-    clientsocket.close()
+    #clientsocket.send("q\n")
+    #clientsocket.close()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('', 11000))
+s.bind((ip, port))
 
 s.listen(5)
 

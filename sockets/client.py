@@ -1,38 +1,128 @@
+import curses
 import socket
-import thread
 import string
 import select
+import argparse
 from collections import deque
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('localhost', 11000))
+parser = argparse.ArgumentParser()
+parser.add_argument("-p", "--port", type=int, help="port number to connect to")
+parser.add_argument("-i", "--ip", help="ip address to connect to")
+args = parser.parse_args()
 
-commands = deque()
+# set up socket parameters
+port = 11000
+ip = "localhost"
+if args.port:
+    port = args.port
+
+if args.ip:
+    ip = args.ip
+
+players = {}
+
+# set up the socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ip, port))
 
 def recieve(socket, queue):
-    buffer = s.recv(2048)
+    buffer = socket.recv(2048)
     split = string.split(buffer)
     for field in split:
         queue.append(field)
 
-while True:
+def game_loop(stdscr):
+    k = 0
+    #cursor_x = 0
+    #cursor_y = 0
+    last_command = ""
 
-    readable, w, e = select.select([s],[],[])
-    for sock in readable:
-        recieve(s, commands)
+    # Clear and refresh the screen for a blank canvas
+    stdscr.clear()
+    stdscr.refresh()
 
-    while len(commands) > 0:
-        command = string.split(commands.popleft(), ":")
-        if command[0] == "q":
-            print("Recieved quit")
-            s.close()
-            exit()
-        elif command[0] == "i":
-            my_id = int(command[1])
-            print("My id is: " + str(my_id))
-        else:
-            print(command)
-    #sleep(1)
-s.send("u\n")
+    # Start colors in curses
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
+
+    curses.curs_set(0)
+
+    quit = False
+
+    # Loop where k is the last character pressed
+    while quit != True:
+        move = ""
+        commands = deque()
+
+        # Initialization
+        stdscr.clear()
+        height, width = stdscr.getmaxyx()
+
+        # This changes terminal size
+        #print "\x1b[8;50;80t"
+
+        if k == curses.KEY_DOWN:
+            move = "d"
+        elif k == curses.KEY_UP:
+            move = "u"
+        elif k == curses.KEY_RIGHT:
+            move = "r"
+        elif k == curses.KEY_LEFT:
+            move = "l"
+        elif k == ord('q'):
+            s.send("q:" + str(my_id))
+            quit = True
+
+        if move != "":
+            s.send("m:" + str(my_id) + ":" + move + "\n")
+
+        readable, w, e = select.select([s],[],[],0.01)
+        for sock in readable:
+            recieve(s, commands)
+
+        while len(commands) > 0:
+            command = string.split(commands.popleft(), ":")
+            if command[0] == "q":
+                quit = True
+                #s.close()
+                #exit()
+            elif command[0] == "i":
+                my_id = int(command[1])
+                # print("My id is: " + str(my_id))
+            elif command[0] == "p" and len(command) == 4 and command[3] != "":
+                players[command[1]] = [command[2], command[3]]
+
+            last_command = str(command)
+
+        #create statusbar string
+        statusbarstr = "Press 'q' to exit | Command: {} | Movement: {}".format(last_command, move)
+        #render Players
+        for i, p in players.iteritems():
+            stdscr.addstr(int(p[1]), int(p[0]), i)
 
 
+        # Render status bar
+        stdscr.attron(curses.color_pair(3))
+        stdscr.addstr(25, 0, statusbarstr)
+        stdscr.addstr(25, len(statusbarstr), " " * (80 - len(statusbarstr)))
+        for i in range(0, 26):
+            stdscr.addstr(i, 80, " ")
+        stdscr.attroff(curses.color_pair(3))
+
+        # Refresh the screen
+        stdscr.refresh()
+
+        # Wait for next input
+        k = stdscr.getch()
+
+    # When game loop is finished
+    s.close()
+    exit()
+
+def main():
+    curses.wrapper(game_loop)
+
+if __name__ == "__main__":
+    main()
