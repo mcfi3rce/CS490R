@@ -4,7 +4,10 @@ import select
 import time
 import string
 import argparse
+import signal
+import sys
 from collections import deque
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--port", type=int, help="port number to connect to")
@@ -32,6 +35,16 @@ class Player:
         self.player_id = id
 
 players = {}
+
+def handler_sigint(signal, frame):
+    print("Recieved SIGINT, server exiting")
+    try:
+        s.close()
+    except signal.error as msg:
+        print(msg)
+    sys.exit()
+
+signal.signal(signal.SIGINT, handler_sigint)
 
 def recieve(socket, queue):
     buffer = socket.recv(2048)
