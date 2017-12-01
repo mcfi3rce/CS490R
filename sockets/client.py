@@ -38,8 +38,9 @@ def game_loop(stdscr):
     last_command = ""
 
     # Clear and refresh the screen for a blank canvas
-    stdscr.clear()
+    stdscr.erase()
     stdscr.refresh()
+    stdscr.nodelay(True)
 
     # Start colors in curses
     curses.start_color()
@@ -57,7 +58,7 @@ def game_loop(stdscr):
         commands = deque()
 
         # Initialization
-        stdscr.clear()
+        stdscr.erase()
         height, width = stdscr.getmaxyx()
 
         # This changes terminal size
