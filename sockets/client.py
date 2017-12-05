@@ -3,6 +3,7 @@ import socket
 import string
 import select
 import argparse
+from player import Player
 from collections import deque
 
 parser = argparse.ArgumentParser()
@@ -49,6 +50,7 @@ def game_loop(stdscr):
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     curses.curs_set(0)
+    curses.resizeterm(28, 80)
 
     quit = False
 
@@ -60,9 +62,6 @@ def game_loop(stdscr):
         # Initialization
         stdscr.erase()
         height, width = stdscr.getmaxyx()
-
-        # This changes terminal size
-        #print "\x1b[8;50;80t"
 
         if k == curses.KEY_DOWN or k == ord('j'):
             move = "d"
@@ -101,16 +100,16 @@ def game_loop(stdscr):
         statusbarstr = "Press 'q' to exit | Command: {} | Movement: {}".format(last_command, move)
         #render Players
         for i, p in players.iteritems():
-            stdscr.addstr(int(p[1]), int(p[0]), i)
+            stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, i)
 
 
         # Render status bar
         stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(25, 0, statusbarstr)
-        stdscr.addstr(25, len(statusbarstr), " " * (80 - len(statusbarstr)))
-        for i in range(0, 26):
-            stdscr.addstr(i, 80, " ")
+        stdscr.addstr(26, 1, statusbarstr)
+        stdscr.addstr(26, len(statusbarstr), " " * (80 - len(statusbarstr)))
         stdscr.attroff(curses.color_pair(3))
+
+        stdscr.border()
 
         # Refresh the screen
         stdscr.refresh()
