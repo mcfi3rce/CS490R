@@ -2,6 +2,7 @@ import curses
 import socket
 import string
 import select
+import time
 import argparse
 from player import Player
 from collections import deque
@@ -71,6 +72,18 @@ def game_loop(stdscr):
             move = "r"
         elif k == curses.KEY_LEFT or k == ord('h'):
             move = "l"
+        elif k == ord('p'):
+            prompt_message = "Please enter the 'Character' you would like to be"
+            prompt = stdscr.subwin(3,len(prompt_message) + 4, 13, 10)
+            prompt.attron(curses.color_pair(1))
+            prompt.border()
+            prompt.attroff(curses.color_pair(1))
+            prompt.addstr(1,2, prompt_message)
+            prompt.refresh()
+            c = -1
+            while (c > 126 or c < 33):
+                c = prompt.getch()
+            s.send("c:" + str(my_id) + ":" + chr(c) + "\n")
         elif k == ord('q'):
             s.send("q:" + str(my_id))
             quit = True

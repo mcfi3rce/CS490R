@@ -92,7 +92,7 @@ def client_thread(clientsocket, address, id):
                     player.loc_x = (player.loc_x + 1) % AREA_WIDTH
                 elif input[2] == "l":
                     player.loc_x = (player.loc_x - 1) % AREA_WIDTH
-
+                    
                 player.last_dir = input[2]
                 players[player.player_id] = player
             else:
