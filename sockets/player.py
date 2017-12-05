@@ -3,6 +3,7 @@ class Player:
 
     has_ball = False
     num_points = 0
+    player_character = "O"
     loc_x = 0
     loc_y = 0
 

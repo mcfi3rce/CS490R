@@ -92,15 +92,17 @@ def client_thread(clientsocket, address, id):
                     player.loc_x = (player.loc_x + 1) % AREA_WIDTH
                 elif input[2] == "l":
                     player.loc_x = (player.loc_x - 1) % AREA_WIDTH
-                    
+
                 player.last_dir = input[2]
                 players[player.player_id] = player
+            elif input[0] == "c" and len(input) == 3 and input[2] != "":
+                players[player.player_id].player_character = input[2]
             else:
                 print(input)
 
         for i, p in players.iteritems():
             try:
-                clientsocket.send("p:" + str(p.player_id) + ":" + str(p.loc_x) + ":" + str(p.loc_y) + "\n")
+                clientsocket.send("p:" + str(p.player_id) + ":" + str(p.loc_x) + ":" + str(p.loc_y) + ":" + str(p.player_character) + "\n")
             except socket.error as msg:
                 print("Player seems to have disconnected, closing socket")
                 try:

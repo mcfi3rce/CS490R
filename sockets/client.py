@@ -104,8 +104,8 @@ def game_loop(stdscr):
             elif command[0] == "i":
                 my_id = int(command[1])
                 # print("My id is: " + str(my_id))
-            elif command[0] == "p" and len(command) == 4 and command[3] != "":
-                players[command[1]] = [command[2], command[3]]
+            elif command[0] == "p" and len(command) == 5 and command[4] != "":
+                players[command[1]] = [command[2], command[3], command[4]]
 
             last_command = str(command)
 
@@ -113,7 +113,7 @@ def game_loop(stdscr):
         statusbarstr = "Press 'q' to exit | Command: {} | Movement: {}".format(last_command, move)
         #render Players
         for i, p in players.iteritems():
-            stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, i)
+            stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, p[2])
 
 
         # Render status bar
