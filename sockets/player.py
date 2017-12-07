@@ -15,12 +15,13 @@ class Player:
     def parse_command(command):
         # Command comes in as an array
         # Confirm array is correctly sized
-        if len(command) == 4 and command[3] != "" and int(command[1]) == self.player_id:
+        if len(command) == 6 and command[5] != "" and int(command[1]) == self.player_id:
             self.loc_x = command[2]
             self.loc_y = command[3]
-            if command[4] == "0":
+            self.player_character = command[4]
+            if command[5] == "0":
                 self.has_ball = False
-            elif command[4] == "1":
+            elif command[5] == "1":
                 self.has_ball = True
 
 

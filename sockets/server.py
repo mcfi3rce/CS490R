@@ -128,7 +128,10 @@ s.listen(5)
 
 next_id = 0
 while True:
-   (clientsocket, address) = s.accept()
-   thread.start_new_thread(client_thread, (clientsocket, address, next_id))
-   next_id = next_id + 1
+    readable, w, e = select.select([s], [], [], 0.001)
+    if s in readable:
+        (clientsocket, address) = s.accept()
+        thread.start_new_thread(client_thread, (clientsocket, address, next_id))
+        next_id = next_id + 1
+    #print(".")
 
