@@ -110,13 +110,14 @@ def game_loop(stdscr):
             last_command = str(command)
 
         #create statusbar string
-        statusbarstr = "Press 'q' to exit | Command: {} | Movement: {}".format(last_command, move)
+        statusbarstr = "Press 'q' to exit | ID: {} | Command: {} | Movement: {}".format(my_id, last_command, move)
         #render Players
         for i, p in players.iteritems():
             if (i == my_id):
                 stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, p[2], curses.color_pair(2))
             else:
                 stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, p[2]) 
+
 
 
         # Render status bar
