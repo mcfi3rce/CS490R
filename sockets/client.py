@@ -47,9 +47,10 @@ def game_loop(stdscr):
     # Start colors in curses
     curses.start_color()
     curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK) 
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
-
+    curses.init_pair(4, curses.COLOR_RED, curses.COLOR_WHITE)
+    
     curses.curs_set(0)
     curses.resizeterm(28, 80)
 
@@ -116,7 +117,7 @@ def game_loop(stdscr):
             if (i == my_id):
                 stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, p[2], curses.color_pair(2))
             else:
-                stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, p[2]) 
+                stdscr.addstr(int(p[1]) + 1, int(p[0]) + 1, p[2], curses.color_pair(1))
 
 
         # Render status bar
